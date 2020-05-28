@@ -1,5 +1,6 @@
 /target/
 /react-app-base/
+/clase-final-rest/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
