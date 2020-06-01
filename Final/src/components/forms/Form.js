@@ -15,11 +15,15 @@ class Form extends Component {
        
         this.props.addUser(this.state.name, this.state.email)
         console.log(this.state);
+        this.setState({
+            name: '',
+            email: ''
+        })
     }
+
 
     asignar = (e) => {
         e.preventDefault();
-
         this.setState({
 
             [e.target.name]: e.target.value
@@ -31,7 +35,7 @@ class Form extends Component {
         return (
             <div>
 
-                <form onSubmit={this.enviar}>
+                <form id="miForm" onSubmit={this.enviar}>
                     <div>
                         <input
                             onChange={this.asignar}
