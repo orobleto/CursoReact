@@ -2,6 +2,8 @@
 /react-app-base/
 /clase-final-rest/
 !.mvn/wrapper/maven-wrapper.jar
+old/
+.vscode/
 
 ### STS ###
 .apt_generated

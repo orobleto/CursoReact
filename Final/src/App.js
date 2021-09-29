@@ -1,71 +1,90 @@
-import React from "react";
-import "./App.css";
-import Form from "./components/forms/Form";
-import Users from "./components/users/Users";
-import usersList from "./resources/usersList.json";
-
-class App extends React.Component {
+import React, { Component } from "react";
+import Formulario from "./Componentes/Formulario";
+import Usuario from "./Componentes/Usuario";
+import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
+import "./CSS/menu.css";
+//https://reactrouter.com/web/guides/quick-start
+//npm install react-router-dom
+export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // usersList: usersList,
-      usersList: [],
+      usuarios: [],
     };
   }
-
   componentDidMount() {
-    const url = "https://jsonplaceholder.typicode.com/users";
-
-    fetch(url)
+    const URL = "https://jsonplaceholder.typicode.com/users";
+    fetch(URL)
       .then((response) => response.json())
-      .then((e) => this.setState({ usersList: e }));
-
-    /*     fetch(url) // https://cors-anywhere.herokuapp.com/https://example.com
-      .then(response => response.text())
-      .then(contents => console.log(contents))
-      .catch(() => console.log("Can’t access " + url + " response. Blocked by browser?")) */
+      .then((usuariosJson) => this.setState({ usuarios: usuariosJson }));
   }
 
-  addUser = (name, email) => {
-    const newUser = {
-      id: this.state.usersList.length,
-      name: name,
-      email: email,
+  addUsuario = (nombre, usuario, correo) => {
+    const USUARIO = {
+      id: this.state.usuarios.length + 1,
+      name: nombre,
+      username: usuario,
+      email: correo,
     };
-    this.setState({ usersList: [...this.state.usersList, newUser] });
-
-    const url = "https://jsonplaceholder.typicode.com/users/";
-
-/*     console.log("Nuevo Usuario"); */
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        newUser,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => console.log(json));
+    this.agregarJSONPLACEHOLDER(USUARIO);
+    this.setState({ usuarios: [...this.state.usuarios, USUARIO] });
   };
 
+  agregarJSONPLACEHOLDER = (usuario) => {
+    const URL = "https://jsonplaceholder.typicode.com/users";
+    const HEADER = {
+      method: "POST",
+      body: JSON.stringify({ usuario }),
+      headers: { "content-type": "application/json" },
+    };
+    fetch(URL, HEADER)
+      .then((response) => response.json())
+      .then((usuario) => console.log(usuario))
+      .catch((e) => console.log(e));
+  };
   render() {
     return (
-      <p>
-        <div style={{ textShadow: "2px 2px 5px #6545a0", textAlign: "center" }}>
-          <h1> Proyecto React js</h1>
-        </div>
+      <Router>
+        <nav className="menu">
+          <NavLink to="/" className="enlace" activeClassName="activo" exact>
+            Inicio
+          </NavLink>
 
-        <div>
-          <Form addUser={this.addUser} />
-        </div>
-        <div>
-          <Users usersList={this.state.usersList} />
-        </div>
-      </p>
+          <NavLink to="/agregar" className="enlace" activeClassName="activo">
+            Formulario
+          </NavLink>
+
+          <NavLink to="/usuarios" className="enlace" activeClassName="activo">
+            Usuarios
+          </NavLink>
+        </nav>
+        <Switch>
+          <Route path="/agregar">
+            <Formulario addUsuario={this.addUsuario} />
+          </Route>
+          <Route path="/usuarios">
+            {this.state.usuarios.map((e) => (
+              <Usuario
+                key={e.id}
+                nombre={e.name}
+                usuario={e.username}
+                correo={e.email}
+              />
+            ))}
+          </Route>
+          <Route path="/">
+            <Formulario addUsuario={this.addUsuario} />
+            {this.state.usuarios.map((e) => (
+              <Usuario
+                key={e.id}
+                nombre={e.name}
+                usuario={e.username}
+                correo={e.email}
+              />
+            ))}
+          </Route>
+        </Switch>
+      </Router>
     );
   }
 }
-
-export default App;
